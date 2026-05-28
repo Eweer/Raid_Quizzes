@@ -1,3 +1,5 @@
+// app.ts
+import { isInSafeSpot } from "./data.js";
 import { getSelectedPlayer, getSelectedSpot, getSelectedPosition, setSelectedPlayer, setSelectedSpot, setSelectedPosition, resetState } from "./state.js";
 import { sendRosterData } from "./services/api.js";
 import { Renderer } from "./ui/renderer.js";
@@ -44,7 +46,12 @@ async function handleActionButtonClick() {
             posX: pos[0],
             posY: pos[1]
         });
-        renderer.showModal("Success!", "Good job :)");
+        if (isInSafeSpot(spot, player, true, [0, 1, 2, 0])) {
+            renderer.showModal("Correcto", "Buen trabajo :)");
+        }
+        else {
+            renderer.showModal("Incorrecto", "... :(");
+        }
         resetTrackingVariables();
     }
     catch (error) {
