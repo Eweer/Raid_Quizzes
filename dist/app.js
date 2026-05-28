@@ -9,7 +9,10 @@ export function initApp(players, spots) {
     currentSpots = spots;
     renderer.renderRoster(players, selectPlayer);
     renderer.initHiddenCanvas('./assets/raidplan_mask.png', handleMapClick, handleMapRightClick);
-    mapActionButton.addEventListener("click", () => handleActionButtonClick());
+    mapActionButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        handleActionButtonClick();
+    });
 }
 function resetTrackingVariables() {
     renderer.clearSpotsLayer();
@@ -24,8 +27,9 @@ async function handleActionButtonClick() {
     const player = getSelectedPlayer();
     const spot = getSelectedSpot();
     const pos = getSelectedPosition();
-    if (!player || !spot || !pos)
+    if (!player || !spot || !pos) {
         return;
+    }
     const btn = $("map-action-btn");
     const originalText = btn.textContent;
     btn.disabled = true;
