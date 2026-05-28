@@ -1,0 +1,43 @@
+export interface Player {
+  name: string;
+  group: 1 | 2 | 3 | 4;
+  role: string;
+}
+
+export interface Spot {
+  id: string;
+  label: string;
+  maskRgb: [number, number, number];
+}
+
+export const players: Player[] = [
+  { name: "Eilalae",  group: 1, role: "Tank" },
+  { name: "Borvak",    group: 1, role: "Healer" },
+  { name: "Cynara",    group: 1, role: "Melee" },
+  { name: "Drethon",   group: 1, role: "Ranged" },
+  { name: "Elowen",    group: 1, role: "Melee" },
+  { name: "Faelith",   group: 2, role: "Tank" },
+  { name: "Grimtusk",  group: 2, role: "Healer" },
+  { name: "Halveth",   group: 2, role: "Melee" },
+  { name: "Shaneara",    group: 2, role: "Ranged" },
+  { name: "Jorwick",   group: 2, role: "Melee" },
+  { name: "Kaelith",   group: 3, role: "Tank" },
+  { name: "Lysveth",   group: 3, role: "Healer" },
+  { name: "Mornath",   group: 3, role: "Melee" },
+  { name: "Narvek",    group: 3, role: "Ranged" },
+  { name: "Orvindel",  group: 3, role: "Melee" },
+  { name: "Phaelion",  group: 4, role: "Tank" },
+  { name: "Dellilah",   group: 4, role: "Healer" },
+  { name: "Ryveth",    group: 4, role: "Melee" },
+  { name: "Sylvara",   group: 4, role: "Ranged" },
+  { name: "Thalven",   group: 4, role: "Melee" },
+];
+
+export const spots: Spot[] = [
+  { id: "S1", label: "1", maskRgb: [   0, 255,   0 ] },
+  { id: "S2", label: "2", maskRgb: [ 255, 255,   0 ] },
+  { id: "S3", label: "3", maskRgb: [ 255,   0, 255 ] },
+  { id: "S4", label: "4", maskRgb: [   0, 255, 255 ] },
+  { id: "S5", label: "5", maskRgb: [ 255,   0,   0 ] },
+  { id: "S6", label: "6", maskRgb: [   0,   0,   0 ] },
+];
