@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Raid Positioning</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="raid-wrap">
+    <p class="raid-title">Raid Positioning</p>
+    <div class="raid-layout">
+      <div class="roster-panel">
+        <p class="roster-title">Roster</p>
+        <div class="group-block"><span class="group-label g1">Group 1</span><ul class="player-list" id="g1-list"></ul></div>
+        <div class="group-block"><span class="group-label g2">Group 2</span><ul class="player-list" id="g2-list"></ul></div>
+        <div class="group-block"><span class="group-label g3">Group 3</span><ul class="player-list" id="g3-list"></ul></div>
+        <div class="group-block"><span class="group-label g4">Group 4</span><ul class="player-list" id="g4-list"></ul></div>
+      </div>
+      <div class="map-panel">
+        <div class="map-container" id="map-container">
+            <img src="./assets/raidplan.png" id="raid-map" alt="Raid map" draggable="false" />
+            <div id="spots-layer"></div>
+            <button id="map-action-btn" class="action-btn" disabled>Enviar selección</button>
+        </div>
+        <div class="status-bar" id="status-bar">
+          <span>Select your name from the roster, then click your spot.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./dist/main.js"></script>
+
+  <dialog id="info-modal">
+    <div class="modal-content">
+        <h2 id="modal-title">Success!</h2>
+        <p id="modal-message">Posición correcta</p>
+        <div class="modal-actions">
+            <button id="confirm-btn">Siguiente</button>
+        </div>
+    </div>
+  </dialog>
+</body>
+</html>
