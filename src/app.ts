@@ -1,5 +1,5 @@
 // app.ts
-import type { Player, Spot } from "./data.js";
+import { isInSafeSpot, type Player, type Spot } from "./data.js";
 import {
     getSelectedPlayer, getSelectedSpot, getSelectedPosition,
     setSelectedPlayer, setSelectedSpot, setSelectedPosition, resetState
@@ -60,7 +60,11 @@ async function handleActionButtonClick(): Promise<void> {
             posY: pos[1]
         });
 
-        renderer.showModal("Success!", "Good job :)");
+        if (isInSafeSpot(spot, player, true, [0, 1, 2, 0])) {
+            renderer.showModal("Correcto", "Buen trabajo :)");
+        } else {
+            renderer.showModal("Incorrecto", "... :(");
+        }
         resetTrackingVariables();
     } catch (error) {
         console.error("Could not connect to database:", error);
