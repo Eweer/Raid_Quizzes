@@ -18,7 +18,10 @@ export function initApp(players: Player[], spots: Spot[]): void {
     renderer.renderRoster(players, selectPlayer);
     renderer.initHiddenCanvas('./assets/raidplan_mask.png', handleMapClick, handleMapRightClick);
 
-    mapActionButton.addEventListener("click", () => handleActionButtonClick());
+    mapActionButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        handleActionButtonClick();
+    });
 }
 
 function resetTrackingVariables(): void {
@@ -37,7 +40,9 @@ async function handleActionButtonClick(): Promise<void> {
     const spot = getSelectedSpot();
     const pos = getSelectedPosition();
 
-    if (!player || !spot || !pos) return;
+    if (!player || !spot || !pos) {
+        return;
+    }
 
     const btn = $("map-action-btn") as HTMLButtonElement;
     const originalText = btn.textContent;
