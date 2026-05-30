@@ -1,22 +1,33 @@
-import type { Player, Spot } from "./data.js";
+import type { Player } from "./data/player.js";
+import type { Spot } from "./data/spots.js";
 
-// State
-let selectedPlayer: Player | null = null;
-let selectedSpot: Spot | null = null;
-let selectedPosition: [number, number] | null = null;
+class SelectionState {
+	private player: Player | null = null;
+	private spot: Spot | null = null;
+	private position: [ number, number ] | null = null;
 
-// Getters
-export const getSelectedPlayer = () => selectedPlayer;
-export const getSelectedSpot = () => selectedSpot;
-export const getSelectedPosition = () => selectedPosition;
+	getPlayer(): Player | null { return this.player; }
+	getSpot(): Spot | null { return this.spot; }
+	getPosition(): [ number, number ] | null { return this.position; }
 
-// Setters
-export const setSelectedPlayer = (p: Player | null) => { selectedPlayer = p; };
-export const setSelectedSpot = (s: Spot | null) => { selectedSpot = s; };
-export const setSelectedPosition = (pos: [number, number] | null) => { selectedPosition = pos; };
+	setPlayer(player: Player): void { this.player = player };
+	setSpot(spot: Spot): void { this.spot = spot };
+	setPosition(position: [ number, number ]): void { this.position = position; }
 
-export const resetState = () => {
-  selectedPlayer = null;
-  selectedSpot = null;
-  selectedPosition = null;
-};
+	resetSpot(): void {
+		this.spot = null;
+		this.position = null;
+	}
+
+	resetAll(): void {
+		this.player = null;
+		this.spot = null;
+		this.position = null;
+	}
+
+	isValid(): boolean {
+		return (this.player !== null && this.spot !== null && this.position !== null);
+	}
+}
+
+export const currentState = new SelectionState();

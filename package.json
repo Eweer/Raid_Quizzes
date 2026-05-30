@@ -1,9 +1,10 @@
 {
-  "scripts": {
-    "build": "tsc",
-    "watch": "tsc --watch"
-  },
-  "devDependencies": {
-    "typescript": "^5.9.3"
-  }
+    "type": "module",
+	"scripts": {
+		"build": "rd /s /q dist & tsc",
+		"watch": "tsc --watch"
+	},
+	"devDependencies": {
+		"typescript": "^5.9.3"
+	}
 }

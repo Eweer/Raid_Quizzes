@@ -1,145 +1,112 @@
-// app.ts
-import { isInSafeSpot, type Player, type Spot } from "./data.js";
-import {
-    getSelectedPlayer, getSelectedSpot, getSelectedPosition,
-    setSelectedPlayer, setSelectedSpot, setSelectedPosition, resetState
-} from "./state.js";
+import { Player } from "./data/player.js";
+import { Spot } from "./data/spots.js";
+import { isInSafeSpot } from "./fs/positionChecker.js";
 import { sendRosterData } from "./services/api.js";
+import { currentState } from "./state.js";
+import { MapCanvas, SpotHit } from "./ui/mapCanvas.js";
 import { Renderer } from "./ui/renderer.js";
 import { $ } from "./utils.js";
 
-let currentSpots: Spot[] = [];
+const MASK_PATH = "./assets/raidplan_mask.png";
+const ACTIVE_SOAK = [ 1, 1, 2, 3 ];
 
-const renderer = new Renderer();
-const mapActionButton = $("map-action-btn") as HTMLButtonElement;
 
-export function initApp(players: Player[], spots: Spot[]): void {
-    currentSpots = spots;
-    renderer.renderRoster(players, selectPlayer);
-    renderer.initHiddenCanvas('./assets/raidplan_mask.png', handleMapClick, handleMapRightClick);
+export function initApp (players: Player[], spots: Spot[]): void {
+	const renderer = new Renderer();
+	const mapCanvas = new MapCanvas(spots, onSpotHit, onMapRightClick);
+	const actionBtn = $<HTMLButtonElement>("map-action-btn");
 
-    mapActionButton.addEventListener("click", (e) => {
-        e.stopPropagation();
-        handleActionButtonClick();
-    });
+	renderer.renderRoster(players, (p) => selectPlayer(p, renderer, actionBtn));
+	mapCanvas.init(MASK_PATH);
+
+	actionBtn.addEventListener("click", (e) => {
+		e.stopPropagation();
+		handleSubmit(renderer, actionBtn);
+	});
+
+	function onSpotHit(hit: SpotHit): void {
+		const player = currentState.getPlayer();
+		if (!player) {
+			renderer.logError("Select your name first.");
+			return;
+		}
+
+		currentState.setSpot(hit.spot);
+		currentState.setPosition([ hit.xPercent, hit.yPercent ]);
+
+		const pos = currentState.getPosition();
+		if (!pos) {
+			renderer.logError("Position is not valid, try again.");
+			return;
+		}
+		renderer.showVisualPing(pos[0], pos[1]);
+		actionBtn.disabled = !currentState.isValid();
+		renderer.logZoneEntry(player.name, hit.spot.label, "Confirmed");
+	}
+
+	function onMapRightClick(e: MouseEvent): void {
+		e.preventDefault();
+		const clickedPing = (e.target as HTMLElement).closest(".spot.clicked");
+		if (clickedPing) {
+			clickedPing.remove();
+			currentState.resetSpot();
+			actionBtn.disabled = !currentState.isValid();
+		}
+	}
 }
 
-function resetTrackingVariables(): void {
-    renderer.clearSpotsLayer();
-    resetState();
-    updateActionButtonState();
+function selectPlayer(
+	player: Player,
+	renderer: Renderer,
+	actionBtn: HTMLButtonElement,
+): void {
+	renderer.resetSpotsLayer();
+	currentState.resetAll();
+	actionBtn.disabled = !currentState.isValid();
+
+	currentState.setPlayer(player);
+	renderer.setActivePlayer(player.name);
+	renderer.logPlayerSelected(player);
 }
 
-function updateActionButtonState(): void {
-    const hasActivePing = document.querySelector(".spot.clicked") !== null;
-    mapActionButton.disabled = !hasActivePing;
-}
+async function handleSubmit(renderer: Renderer, btn: HTMLButtonElement) {
+	const player    = currentState.getPlayer();
+	const spot      = currentState.getSpot();
+	const pos       = currentState.getPosition();
 
-async function handleActionButtonClick(): Promise<void> {
-    const player = getSelectedPlayer();
-    const spot = getSelectedSpot();
-    const pos = getSelectedPosition();
+	if (!player || !spot || !pos) {
+		return;
+	}
 
-    if (!player || !spot || !pos) {
-        return;
-    }
+	const originalLabel = btn.textContent;
+	btn.disabled = true;
+	btn.textContent = "Submitting...";
 
-    const btn = $("map-action-btn") as HTMLButtonElement;
-    const originalText = btn.textContent;
-    btn.disabled = true;
-    btn.textContent = "Submitting...";
+	try {
+		await sendRosterData({
+			playerName: player.name,
+			group: 		player.group,
+			role:		player.role,
+			spotLabel:	spot.label,
+			spotId: 	spot.id,
+			posX:		pos[0],
+			posY:		pos[1],
+		});
 
-    try {
-        await sendRosterData({
-            playerName: player.name,
-            group: player.group,
-            role: player.role,
-            spotLabel: spot.label,
-            spotId: spot.id,
-            posX: pos[0],
-            posY: pos[1]
-        });
+		const correct = isInSafeSpot(spot, player, false, ACTIVE_SOAK);
+		renderer.showModal(
+			correct ? "Correcto"		: "Incorrecto",
+			correct ? "Buen trabajo :)" : "... :(",
+		);
 
-        if (isInSafeSpot(spot, player, true, [0, 1, 2, 0])) {
-            renderer.showModal("Correcto", "Buen trabajo :)");
-        } else {
-            renderer.showModal("Incorrecto", "... :(");
-        }
-        resetTrackingVariables();
-    } catch (error) {
-        console.error("Could not connect to database:", error);
-        alert("Network transmission error. Please try again!");
-        btn.disabled = false;
-    } finally {
-        btn.textContent = originalText;
-    }
-}
+		renderer.resetSpotsLayer();
+		currentState.resetSpot();
+	} catch (err) {
+		console.error(`Could not connect to database: ${err}`);
+		alert("Network transmission error. Please try again.");
+	} finally {
+		btn.disabled = !currentState.isValid();
+		btn.textContent = originalLabel;
+	}
 
-function filterPlayer(val: string, players: Player[]): void {
-    const v = val.toLowerCase();
-    document.querySelectorAll<HTMLElement>(".player-item").forEach((li) => {
-        const name = (li.dataset["name"] ?? "").toLowerCase();
-        li.style.display = name.includes(v) ? "" : "none";
-        if (v && name === v) {
-            const p = players.find((p) => p.name.toLowerCase() === v);
-            if (p) {
-				selectPlayer(p);
-			}
-        }
-    });
-}
-
-function selectPlayer(p: Player): void {
-    resetTrackingVariables();
-    setSelectedPlayer(p);
-    renderer.setActivePlayer(p.name);
-    renderer.updateStatus({
-        type: 'player',
-        data: {
-            name: p.name,
-            group: p.group,
-            role: p.role
-        }
-    });
-}
-
-
-function handleMapClick(e: MouseEvent): void {
-    const clickedAt = renderer.getSpotAt(e, currentSpots);
-
-    if (clickedAt) {
-        handleSpotClick(clickedAt.spot, clickedAt.x, clickedAt.y);
-    }
-}
-
-function handleSpotClick(s: Spot, posX: number, posY: number): void {
-    const player = getSelectedPlayer();
-    if (!player) {
-        renderer.updateStatus({ type: 'error', data: "Select your name first." });
-        return;
-    }
-
-    setSelectedSpot(s);
-    setSelectedPosition([posX, posY]);
-
-    renderer.showVisualPing(posX, posY);
-    updateActionButtonState();
-
-    renderer.updateStatus({
-        type: 'zone',
-        data: { name: player.name, label: s.label }
-    });
-}
-
-function handleMapRightClick(e: MouseEvent): void {
-    e.preventDefault();
-    const target = e.target as HTMLElement;
-    const clickedPing = target.closest(".spot.clicked");
-
-    if (clickedPing) {
-        clickedPing.remove();
-        setSelectedSpot(null);
-        setSelectedPosition(null);
-        updateActionButtonState();
-    }
 }
