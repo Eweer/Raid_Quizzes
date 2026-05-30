@@ -1,17 +1,28 @@
-// State
-let selectedPlayer = null;
-let selectedSpot = null;
-let selectedPosition = null;
-// Getters
-export const getSelectedPlayer = () => selectedPlayer;
-export const getSelectedSpot = () => selectedSpot;
-export const getSelectedPosition = () => selectedPosition;
-// Setters
-export const setSelectedPlayer = (p) => { selectedPlayer = p; };
-export const setSelectedSpot = (s) => { selectedSpot = s; };
-export const setSelectedPosition = (pos) => { selectedPosition = pos; };
-export const resetState = () => {
-    selectedPlayer = null;
-    selectedSpot = null;
-    selectedPosition = null;
-};
+class SelectionState {
+    constructor() {
+        this.player = null;
+        this.spot = null;
+        this.position = null;
+    }
+    getPlayer() { return this.player; }
+    getSpot() { return this.spot; }
+    getPosition() { return this.position; }
+    setPlayer(player) { this.player = player; }
+    ;
+    setSpot(spot) { this.spot = spot; }
+    ;
+    setPosition(position) { this.position = position; }
+    resetSpot() {
+        this.spot = null;
+        this.position = null;
+    }
+    resetAll() {
+        this.player = null;
+        this.spot = null;
+        this.position = null;
+    }
+    isValid() {
+        return (this.player !== null && this.spot !== null && this.position !== null);
+    }
+}
+export const currentState = new SelectionState();

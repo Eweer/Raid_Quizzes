@@ -1,6 +1,6 @@
-const API_URL = "https://tight-flower-d805.eweer.workers.dev";
+const WORKER_URL = "https://tight-flower-d805.eweer.workers.dev";
 export async function sendRosterData(payload) {
-    return await fetch(API_URL, {
+    return await fetch(WORKER_URL, {
         redirect: "follow",
         method: "POST",
         mode: "no-cors",
