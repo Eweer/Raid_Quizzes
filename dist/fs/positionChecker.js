@@ -1,22 +1,10 @@
-const assignments = {
-    "1Melee": [1],
-    "2Melee": [2],
-    "3Melee": [3],
-    "4Melee": [4],
-    "1Ranged": [1],
-    "2Ranged": [2],
-    "3Ranged": [3],
-    "4Ranged": [4],
-    "1Tank": [1],
-    "2Tank": [2],
-    "3Tank": [3],
-    "4Tank": [4],
-    "1Healer": [1, 6],
-    "2Healer": [2, 5],
-    "3Healer": [3],
-    "4Healer": [4],
-};
 const CORRECT_SOAK_POSITIONS = [1, 2, 3, 4];
+const assignments = {
+    1: { Tank: [1], Melee: [1], Ranged: [1], Healer: [1, 6] },
+    2: { Tank: [2], Melee: [2], Ranged: [2], Healer: [2, 5] },
+    3: { Tank: [3], Melee: [3], Ranged: [3], Healer: [3] },
+    4: { Tank: [4], Melee: [4], Ranged: [4], Healer: [4] },
+};
 export function isInSafeSpot(spot, player, hasSoak = false, currentSoaks = []) {
     const spotNum = spot.id;
     if (player.role === "Healer" && hasSoak && player.isMobile) {
@@ -31,8 +19,8 @@ export function isInSafeSpot(spot, player, hasSoak = false, currentSoaks = []) {
                 console.log("Error: Soak positions are not valid.\nPlease, report this issue to an admin.");
                 return false;
             }
-            return assignments[`${missing}Healer`].some(v => v === spotNum);
+            return assignments[missing]["Healer"].some(v => v === spotNum);
         }
     }
-    return assignments[`${player.group}${player.role}`].some(v => v === spotNum);
+    return assignments[player.group][player.role].some(v => v === spotNum);
 }
