@@ -72,6 +72,7 @@ async function handleSubmit(renderer, btn) {
             posY: pos[1],
         });
         const correct = isInSafeSpot(spot, player, false, ACTIVE_SOAK);
+        console.log(`Answer is ${correct ? "correct." : "incorrect."}`);
         renderer.showModal(correct ? "Correcto" : "Incorrecto", correct ? "Buen trabajo :)" : "... :(");
         renderer.resetSpotsLayer();
         currentState.resetSpot();

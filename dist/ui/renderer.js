@@ -59,5 +59,6 @@ export class Renderer {
     showModal(title, message) {
         $("modal-title").textContent = title;
         $("modal-message").textContent = message;
+        this.modal.showModal();
     }
 }
