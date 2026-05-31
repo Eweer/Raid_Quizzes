@@ -3,10 +3,15 @@ import { $ } from "../utils.js";
 import { PlayerLog } from "./playerLog.js";
 
 export class Renderer {
-	private spotsLayer = $("spots-layer");
-	private modal = $<HTMLDialogElement>("info-modal");
+	private readonly log: PlayerLog;
+	private readonly spotsLayer: HTMLElement;
+	private readonly modal: HTMLDialogElement;
 
 	constructor() {
+		this.spotsLayer = $("spots-layer");
+		this.modal = $<HTMLDialogElement>("info-modal");
+		this.log = new PlayerLog($("status-bar"));
+
 		$<HTMLButtonElement>("confirm-btn").addEventListener("click", () => {
 			this.modal.close();
 		});
@@ -38,25 +43,25 @@ export class Renderer {
 	}
 
 	public logPlayerSelected(player: Player): void {
-		PlayerLog.newPlayerSelected(player.name, player.group, player.role);
+		this.log.newPlayerSelected(player.name, player.group, player.role);
 	}
 
 	public logZoneEntry(playerName: string, zoneLabel: string, action: string): void {
-		PlayerLog.addZoneEntry(playerName, zoneLabel, action);
+		this.log.addZoneEntry(playerName, zoneLabel, action);
 	}
 
 	public logError(message: string): void {
-		PlayerLog.addErrorEntry(message);
+		this.log.addErrorEntry(message);
 	}
 
 	public showVisualPing(xPercent: number, yPercent: number): void {
+		const inner = document.createElement("div");
+		inner.className = "spot-inner";
+
 		const ping          = document.createElement("div");
 		ping.className      = "spot clicked";
 		ping.style.left     = `${xPercent}%`;
 		ping.style.top      = `${yPercent}%`;
-
-		const inner = document.createElement("div");
-		inner.className = "spot-inner";
 		ping.appendChild(inner);
 
 		this.clearSpotsLayer();

@@ -10,7 +10,6 @@ import { $ } from "./utils.js";
 const MASK_PATH = "./assets/raidplan_mask.png";
 const ACTIVE_SOAK = [ 1, 1, 2, 3 ];
 
-
 export function initApp (players: Player[], spots: Spot[]): void {
 	const renderer = new Renderer();
 	const mapCanvas = new MapCanvas(spots, onSpotHit, onMapRightClick);
