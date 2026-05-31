@@ -4,6 +4,7 @@ export class Renderer {
     constructor() {
         this.spotsLayer = $("spots-layer");
         this.modal = $("info-modal");
+        this.log = new PlayerLog($("status-bar"));
         $("confirm-btn").addEventListener("click", () => {
             this.modal.close();
         });
@@ -31,21 +32,21 @@ export class Renderer {
         console.log(`Selected player ${name}`);
     }
     logPlayerSelected(player) {
-        PlayerLog.newPlayerSelected(player.name, player.group, player.role);
+        this.log.newPlayerSelected(player.name, player.group, player.role);
     }
     logZoneEntry(playerName, zoneLabel, action) {
-        PlayerLog.addZoneEntry(playerName, zoneLabel, action);
+        this.log.addZoneEntry(playerName, zoneLabel, action);
     }
     logError(message) {
-        PlayerLog.addErrorEntry(message);
+        this.log.addErrorEntry(message);
     }
     showVisualPing(xPercent, yPercent) {
+        const inner = document.createElement("div");
+        inner.className = "spot-inner";
         const ping = document.createElement("div");
         ping.className = "spot clicked";
         ping.style.left = `${xPercent}%`;
         ping.style.top = `${yPercent}%`;
-        const inner = document.createElement("div");
-        inner.className = "spot-inner";
         ping.appendChild(inner);
         this.clearSpotsLayer();
         this.spotsLayer.appendChild(ping);
