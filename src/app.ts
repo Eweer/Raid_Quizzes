@@ -94,6 +94,7 @@ async function handleSubmit(renderer: Renderer, btn: HTMLButtonElement) {
 		});
 
 		const correct = isInSafeSpot(spot, player, false, ACTIVE_SOAK);
+		console.log(`Answer is ${correct ? "correct." : "incorrect."}`);
 		renderer.showModal(
 			correct ? "Correcto"		: "Incorrecto",
 			correct ? "Buen trabajo :)" : "... :(",

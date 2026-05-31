@@ -51,9 +51,9 @@ export function isInSafeSpot(
                 return false;
             }
 
-            return spotNum in assignments[`${missing}Healer`];
+            return assignments[`${missing}Healer`].some(v => v === spotNum);
         }
     }
 
-    return spotNum in assignments[`${player.group}${player.role}`];
+    return assignments[`${player.group}${player.role}`].some(v => v === spotNum);
 }
