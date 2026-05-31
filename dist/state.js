@@ -1,4 +1,4 @@
-class SelectionState {
+export class SelectionState {
     constructor() {
         this.player = null;
         this.spot = null;
@@ -25,4 +25,3 @@ class SelectionState {
         return (this.player !== null && this.spot !== null && this.position !== null);
     }
 }
-export const currentState = new SelectionState();
