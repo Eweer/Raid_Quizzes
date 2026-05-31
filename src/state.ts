@@ -1,7 +1,7 @@
 import type { Player } from "./data/player.js";
 import type { Spot } from "./data/spots.js";
 
-class SelectionState {
+export class SelectionState {
 	private player: Player | null = null;
 	private spot: Spot | null = null;
 	private position: [ number, number ] | null = null;
@@ -29,5 +29,3 @@ class SelectionState {
 		return (this.player !== null && this.spot !== null && this.position !== null);
 	}
 }
-
-export const currentState = new SelectionState();

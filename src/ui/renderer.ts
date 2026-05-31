@@ -10,7 +10,7 @@ export class Renderer {
 	constructor() {
 		this.spotsLayer = $("spots-layer");
 		this.modal = $<HTMLDialogElement>("info-modal");
-		this.log = new PlayerLog($("status-bar"));
+		this.log = new PlayerLog($("player-log"));
 
 		$<HTMLButtonElement>("confirm-btn").addEventListener("click", () => {
 			this.modal.close();
